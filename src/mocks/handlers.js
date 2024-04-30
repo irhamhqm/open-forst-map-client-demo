@@ -1,0 +1,175 @@
+import { HttpResponse, http } from "msw";
+
+const baseUrl = import.meta.env.VITE_API_URL;
+
+export const handlers = [
+  http.post(`${baseUrl}/api/biodiversity_index`, () => {
+    return HttpResponse.json({
+      data: [
+        {
+          datetime: "2019-03",
+          evenness: -0.7858329088,
+          fire_events: null,
+          policies: null,
+          programs: null,
+          shannon_index: -0.09264152043,
+        },
+        {
+          datetime: "2019-04",
+          evenness: -0.9676209292,
+          fire_events: null,
+          policies: null,
+          programs: null,
+          shannon_index: 0.2403139151,
+        },
+        {
+          datetime: "2019-05",
+          evenness: -0.8443143245,
+          fire_events: null,
+          policies: null,
+          programs: null,
+          shannon_index: -0.08357877073,
+        },
+        {
+          datetime: "2019-06",
+          evenness: 0.6766194059,
+          fire_events: null,
+          policies: null,
+          programs: null,
+          shannon_index: 0.6300634567,
+        },
+        {
+          datetime: "2019-07",
+          evenness: -0.5017400136,
+          fire_events: null,
+          policies: null,
+          programs: null,
+          shannon_index: -0.469558809,
+        },
+        {
+          datetime: "2019-08",
+          evenness: 0.4201554071,
+          fire_events: null,
+          policies: null,
+          programs: null,
+          shannon_index: -0.2593168628,
+        },
+        {
+          datetime: "2019-09",
+          evenness: -0.6075517374,
+          fire_events: null,
+          policies: null,
+          programs: null,
+          shannon_index: -0.08228293422,
+        },
+        {
+          datetime: "2019-10",
+          evenness: 0.8043221345,
+          fire_events: null,
+          policies: null,
+          programs: null,
+          shannon_index: -0.2206121138,
+        },
+        {
+          datetime: "2019-11",
+          evenness: -0.4831522605,
+          fire_events: null,
+          policies: null,
+          programs: [
+            {
+              datetime: "2019-11-01",
+              budget: 2500000,
+              document: "http://43.218.146.246:5001/api/files/program_10.pdf",
+              name: "INCREDIBLE",
+              program_id: "program_10",
+              scope:
+                "Foster knowledge and innovation in non-wood forest product sectors across the Mediterranean basin",
+            },
+          ],
+          shannon_index: -0.4083482529,
+        },
+        {
+          datetime: "2019-12",
+          evenness: -0.2095140927,
+          fire_events: null,
+          policies: null,
+          programs: null,
+          shannon_index: -0.1023366819,
+        },
+        {
+          datetime: "2020-01",
+          evenness: -0.3064772733,
+          fire_events: null,
+          policies: null,
+          programs: null,
+          shannon_index: 0.7794289001,
+        },
+        {
+          datetime: "2020-02",
+          evenness: -0.04807298092,
+          fire_events: null,
+          policies: null,
+          programs: null,
+          shannon_index: 0.7477774812,
+        },
+        {
+          datetime: "2020-03",
+          evenness: -0.6326619922,
+          fire_events: null,
+          policies: null,
+          programs: [
+            {
+              datetime: "2020-03-11",
+              budget: 2000000,
+              document: "http://43.218.146.246:5001/api/files/program_11.pdf",
+              name: "MySustainableForest",
+              program_id: "program_11",
+              scope:
+                "Utilization of Earth Observation and other geo-information technologies to support sustainable forest management decisions",
+            },
+          ],
+          shannon_index: -0.9864880768,
+        },
+        {
+          datetime: "2020-04",
+          evenness: -0.1778959128,
+          fire_events: null,
+          policies: null,
+          programs: null,
+          shannon_index: -0.1722449272,
+        },
+        {
+          datetime: "2020-05",
+          evenness: 0.8779295957,
+          fire_events: null,
+          policies: null,
+          programs: null,
+          shannon_index: 0.3481548952,
+        },
+        {
+          datetime: "2020-06",
+          evenness: -0.5438263173,
+          fire_events: null,
+          policies: null,
+          programs: null,
+          shannon_index: -0.6837879711,
+        },
+        {
+          datetime: "2020-07",
+          evenness: 0.1846734903,
+          fire_events: null,
+          policies: null,
+          programs: null,
+          shannon_index: -0.2091733855,
+        },
+      ],
+      meta: {
+        count: 1097,
+        end: "2022-03-01",
+        frequency: "daily",
+        start: "2019-03-01",
+      },
+      status: true,
+    });
+  }),
+];
