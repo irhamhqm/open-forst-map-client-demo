@@ -1,10 +1,10 @@
-import "./App.css";
+// import "./App.css";
 import { MapContainer, TileLayer } from "react-leaflet";
-import Drawing from "./components/Drawing";
+import Drawing from "../../components/Drawing";
 import { useMemo, useState } from "react";
-import SideDrawer from "./components/SideDrawer";
-import { parseStringToSilvanusCoord, sivalnusCoordToSilvanusGeo } from "./util";
-import Main from "./components/Main";
+import SideDrawer from "../../components/SideDrawer";
+import { parseStringToSilvanusCoord, sivalnusCoordToSilvanusGeo } from "../../util";
+import Main from "../../components/Main";
 import {
   useGetBiodiversityIndex,
   useGetContinuousMonitoring,
@@ -13,11 +13,11 @@ import {
   useGetFireEventDetails,
   useGetPolicyDetails,
   useGetProgramDetails,
-} from "./hooks/api";
+} from "../../hooks/api";
 import { getUnixTime, sub } from "date-fns";
-import Charts from "./components/Charts";
-import DetailChart from "./components/DetailChart";
-import EventDetail from "./components/EventDetail";
+import Charts from "../../components/Charts";
+import DetailChart from "../../components/DetailChart";
+import EventDetail from "../../components/EventDetail";
 // import GeotiffLayer from "./components/Layers/GeotiffLayer";
 
 // const tiffUrl =
