@@ -1,7 +1,7 @@
 // import "./App.css";
 import { MapContainer, TileLayer } from "react-leaflet";
 import Drawing from "../../components/Drawing";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import SideDrawer from "../../components/SideDrawer";
 import { parseStringToSilvanusCoord, sivalnusCoordToSilvanusGeo } from "../../util";
 import Main from "../../components/Main";
@@ -18,6 +18,9 @@ import { getUnixTime, sub } from "date-fns";
 import Charts from "../../components/Charts";
 import DetailChart from "../../components/DetailChart";
 import EventDetail from "../../components/EventDetail";
+import { useLocation, useNavigate } from "react-router-dom";
+import store from "store2";
+import ReportBugButton from './components/ReportBugButton';
 // import GeotiffLayer from "./components/Layers/GeotiffLayer";
 
 // const tiffUrl =
@@ -51,6 +54,16 @@ function App() {
   const [end, setEnd] = useState(new Date());
   const [date, setDate] = useState(new Date());
   const [mode, setMode] = useState("range");
+
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // CEK APAKAH USER SUDAH LOGIN
+  useEffect(() => {
+    if(!location?.state?.signedUp) {
+      navigate('/signin')
+    }
+  }, [location?.state?.signedUp]);
 
   const unixStart = useMemo(() => {
     return getUnixTime(start);
@@ -183,6 +196,38 @@ function App() {
 
   return (
     <>
+      <div className="flex w-full bg-gray-800 py-4">
+        <div className="container mx-auto px-4 flex">
+          <p className="text-white text-xl font-semibold">
+            Hello, {store.get("user_data").user_display_name},{' '}
+            {store.get("user_data").user_role === 'client'? 'Client for Pilot' : 'Admin for Pilot'}{' '}
+            {store.get("user_data").pilot_name}
+          </p>
+          {/* {pilotData?.pilot_name || "Super admin"} */}
+          
+        <button
+          className="ml-4 bg-blue-500 hover:bg-blue-600 text-white font-bold px-4 rounded-md transition duration-300 ease-in-out"
+          onClick={() => {
+            store.clear();
+            navigate("/");
+          }}
+        >
+          Sign Out
+        </button>
+        </div>
+        {/* <button
+          className="ml-auto border border-solid border-gray-600 p-1"
+          onClick={() => navigate("/data")}
+        >
+          View Data
+        </button>
+        <button
+          onClick={() => setDrawerOpen((prev) => !prev)}
+          className="ml-2 border border-solid border-gray-600 p-1"
+        >
+          {drawerOpen ? "Close" : "Input Data"}
+        </button> */}
+      </div>
       <Main
         openDrawer={() => setDrawerOpen(true)}
         selectedType={selectedType}
@@ -247,6 +292,7 @@ function App() {
         /> */}
         <Drawing onCreate={(obj) => setDrawnObj(obj)} />
       </MapContainer>
+      <ReportBugButton/>
     </>
   );
 }
