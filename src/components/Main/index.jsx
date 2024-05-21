@@ -1,5 +1,6 @@
 import { IconMenu2 } from "@tabler/icons-react";
 import DatePicker from "react-datepicker";
+import { useState } from "react";
 
 import "react-datepicker/dist/react-datepicker.css";
 // semua input date pakai date range
@@ -20,8 +21,43 @@ export default function Main({
   setDate,
   mode,
 }) {
+  const [isDragging, setIsDragging] = useState(false);
+  const [position, setPosition] = useState({ x: window.innerWidth / 2, y: 50 });
+  const [offset, setOffset] = useState({ x: 0, y: 0 });
+
+  const handleMouseDown = (e) => {
+    setIsDragging(true);
+    setOffset({
+      x: e.clientX - position.x,
+      y: e.clientY - position.y
+    });
+  };
+
+  const handleMouseMove = (e) => {
+    if (!isDragging) return;
+
+    setPosition({
+      x: e.clientX - offset.x,
+      y: e.clientY - offset.y
+    });
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
   return (
-    <div className="bg-white fixed top-14 left-[50%] -translate-x-1/2 z-[1002] p-6 rounded-2xl">
+    <div 
+      className="bg-white fixed top-14 left-[50%] -translate-x-1/2 z-[1002] p-6 rounded-2xl"
+      style={{
+        position: 'absolute',
+        top: position.y,
+        left: position.x,
+        cursor: isDragging ? 'grabbing' : 'grab'
+      }}
+      onMouseDown={handleMouseDown}
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}>
       <div className="flex px-6 gap-4">
         <div className="bg-gray-300 w-8 h-8 flex items-center justify-center">
           <IconMenu2 onClick={() => openDrawer(true)} />
