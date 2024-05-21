@@ -35,7 +35,6 @@ const SignIn = () => {
   );
 
   const onButtonClick = (values) => {
-    console.log('values: ', values)
     if (values) {
       mutate({
         user_name: values.username,

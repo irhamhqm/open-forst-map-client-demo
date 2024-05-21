@@ -1,6 +1,7 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Home from "./pages/home";
 import SignIn from "./pages/signin";
+import SignUp from "./pages/signup";
 import App from "./pages/map";
 
 function AppRouter() {
@@ -20,6 +21,10 @@ function AppRouter() {
           <Route
             path="/map"
             element={<App />}
+          />
+          <Route
+            path="/signup"
+            element={<SignUp />}
           />
         </Routes>
       </BrowserRouter>

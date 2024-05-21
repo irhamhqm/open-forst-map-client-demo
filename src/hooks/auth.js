@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { signIn, getIsMe } from "../api/auth";
+import { signIn, getIsMe, signUp } from "../api/auth";
 
 export const useSignIn = () => {
     return useMutation({
@@ -13,5 +13,12 @@ export const useSignIn = () => {
       queryFn: () => getIsMe(),
       select: (response) => response,
       enabled: isSignInSuccess,
+    });
+  };
+
+  export const useSignUp = () => {
+    return useMutation({
+      mutationKey: ["signup"],
+      mutationFn: (payload) => signUp(payload),
     });
   };

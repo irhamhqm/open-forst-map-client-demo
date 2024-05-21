@@ -1,4 +1,4 @@
-import { SignInPayload, SignInResponse, IsMeResponse } from "../types/auth";
+import { SignInPayload, SignInResponse, IsMeResponse, SignUpPayload, SignUpResponse} from "../types/auth";
 import axios from "axios";
 import axiosAuthInstance from "../util/axios";
 
@@ -17,4 +17,12 @@ export const getIsMe: () => Promise<IsMeResponse> = async () => {
 const response = await axiosAuthInstance().get(`${baseUrl}/api/auth/me`);
 
 return response.data;
+};
+
+export const signUp: (
+  payload: SignUpPayload
+) => Promise<SignUpResponse> = async (payload) => {
+  const res = await axios.post(`${baseUrl}/api/auth/register`, payload);
+
+  return res.data;
 };
