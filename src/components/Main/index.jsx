@@ -21,7 +21,7 @@ export default function Main({
   mode,
 }) {
   return (
-    <div className="bg-white fixed top-4 left-[50%] -translate-x-1/2 z-[1002] p-6 rounded-2xl">
+    <div className="bg-white fixed top-14 left-[50%] -translate-x-1/2 z-[1002] p-6 rounded-2xl">
       <div className="flex px-6 gap-4">
         <div className="bg-gray-300 w-8 h-8 flex items-center justify-center">
           <IconMenu2 onClick={() => openDrawer(true)} />
