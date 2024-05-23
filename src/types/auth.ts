@@ -43,3 +43,13 @@ export interface SignInPayload {
     meta: string;
     status: boolean;
   }
+
+  export interface ForgotPasswordPayload {
+    user_email: string;
+  }  
+
+  export interface ForgotPasswordResponse {
+    data: unknown;
+    meta: string;
+    status: boolean;
+  }
