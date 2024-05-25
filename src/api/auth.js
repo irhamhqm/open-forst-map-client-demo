@@ -21,3 +21,9 @@ export const signUp = async (payload) => {
 
   return res.data;
 };
+
+export const forgotPassword = async (payload) => {
+  const res = await axios.post(`${baseUrl}/api/auth/forgot_password`, payload);
+
+  return res.data;
+};

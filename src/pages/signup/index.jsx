@@ -454,7 +454,7 @@ const SignUp = () => {
                   </a>
                   &nbsp;to redirect you to the
                   <br />
-                  Sign Up page
+                  Sign In page
                 </Alert>
               )}
               {isError && (

@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { signIn, getIsMe, signUp } from "../api/auth";
+import { signIn, getIsMe, signUp, forgotPassword } from "../api/auth";
 
 export const useSignIn = () => {
     return useMutation({
@@ -8,8 +8,11 @@ export const useSignIn = () => {
   };
 
   export const useGetIsMe = (isSignInSuccess, token) => {
+    const now = new Date();
+    const currentTime = now.toLocaleTimeString();
+    
     return useQuery({
-      queryKey: ["useGetIsMe" + token],
+      queryKey: ["useGetIsMe", token, currentTime],
       queryFn: () => getIsMe(),
       select: (response) => response,
       enabled: isSignInSuccess,
@@ -20,5 +23,11 @@ export const useSignIn = () => {
     return useMutation({
       mutationKey: ["signup"],
       mutationFn: (payload) => signUp(payload),
+    });
+  };
+
+  export const useForgotPassword = () => {
+    return useMutation({
+      mutationFn: (payload) => forgotPassword(payload),
     });
   };

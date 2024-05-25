@@ -2,6 +2,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Home from "./pages/home";
 import SignIn from "./pages/signin";
 import SignUp from "./pages/signup";
+import ForgotPassword from "./pages/forgot_password";
 import App from "./pages/map";
 import React from "react";
 
@@ -25,6 +26,10 @@ function AppRouter() {
           <Route
             path="/signup"
             element={<SignUp />}
+          />
+          <Route
+            path="/forgot"
+            element={<ForgotPassword />}
           />
         </Routes>
       </BrowserRouter>
