@@ -148,7 +148,7 @@ function App() {
               end,
               "yyyy-MM-dd"
             )}`,
-            variables: "",
+            variables: "ndvi, nbr",
           },
         },
         {
