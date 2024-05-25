@@ -2,6 +2,7 @@ import { useMemo } from "react";
 
 import { Line } from "react-chartjs-2";
 import { htmlLegendPlugin } from "../../plugins/htmlLegend";
+import React from "react";
 
 export default function ContinuousMonitoringChart({ data, openEventDetail }) {
   const labels = useMemo(() => {
@@ -222,7 +223,10 @@ export default function ContinuousMonitoringChart({ data, openEventDetail }) {
           plugins={[htmlLegendPlugin]}
         />
       </div>
-      <div id="legend-container" className="h-8"></div>
+      <div
+        id="legend-container"
+        className="h-8"
+      ></div>
     </>
   );
 }

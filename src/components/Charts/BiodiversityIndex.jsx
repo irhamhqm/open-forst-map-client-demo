@@ -1,124 +1,254 @@
+// @ts-nocheck
 import { useMemo } from "react";
 
 import { Line } from "react-chartjs-2";
 import { htmlLegendPlugin } from "../../plugins/htmlLegend";
 import xAxisEventPlugin from "../../plugins/xAxisEvent";
+import React from "react";
+
+const getImage = (url) => {
+  const img = new Image();
+  img.src = url;
+  return img;
+};
 
 export default function BiodiversityIndexChart({ data, openEventDetail }) {
   const labels = useMemo(() => {
     if (data) {
-      return data.data.map((data) => data.datetime);
+      const temp = [];
+      data.data.forEach((data) => {
+        if (data.temporal.acquired_date) {
+          temp.push(data.temporal.acquired_date);
+        }
+        if (data.temporal.from_date) {
+          temp.push(data.temporal.from_date);
+        }
+        if (data.temporal.to_date) {
+          temp.push(data.temporal.to_date);
+        }
+      });
+      temp.sort((a, b) => {
+        a = a.split("-").join("");
+        b = b.split("-").join("");
+
+        return a > b ? 1 : a < b ? -1 : 0;
+      });
+
+      return Array.from(new Set(temp));
     }
     return [];
   }, [data]);
 
+  const programsData = useMemo(() => {
+    return data.data.filter((data) => data.variable_name === "programs") || [];
+  }, [data]);
+
+  const regulationsData = useMemo(() => {
+    return (
+      data.data.filter((data) => data.variable_name === "regulations") || []
+    );
+  }, [data]);
+
+  const fireEventsData = useMemo(() => {
+    return (
+      data.data.filter((data) => data.variable_name === "fire_events") || []
+    );
+  }, [data]);
+
+  const shannonIndexData = useMemo(() => {
+    const temp = data.data.filter(
+      (data) => data.variable_name === "shannon_index"
+    );
+    const res = Array(labels.length);
+    temp.forEach((data) => {
+      const startIndex = labels.findIndex(
+        (val) => val === data.temporal.from_date
+      );
+      const endIndex = labels.findIndex((val) => val === data.temporal.to_date);
+      for (let i = startIndex; i <= endIndex; i++) {
+        res[i] = data.properties.value;
+      }
+    });
+
+    return res;
+  }, [data]);
+
+  const evennessData = useMemo(() => {
+    const temp = data.data.filter((data) => data.variable_name === "evenness");
+    const res = Array(labels.length);
+    temp.forEach((data) => {
+      const startIndex = labels.findIndex(
+        (val) => val === data.temporal.from_date
+      );
+      const endIndex = labels.findIndex((val) => val === data.temporal.to_date);
+      for (let i = startIndex; i <= endIndex; i++) {
+        res[i] = data.properties.value;
+      }
+    });
+
+    return res;
+  }, [data]);
+
   const events = useMemo(() => {
-    if (data) {
-      return data.data.reduce((accu, curr) => {
-        if (curr.fire_events?.length) {
-          accu.push({
-            id: `fireevent::${curr.fire_events[0].fire_event_id}`,
-            type: "line",
-            borderColor: "ff0000",
-            // will always get the month
-            xMax: curr.fire_events[0].datetime.slice(
-              0,
-              curr.fire_events[0].datetime.length - 3
-            ),
-            xMin: curr.fire_events[0].datetime.slice(
-              0,
-              curr.fire_events[0].datetime.length - 3
-            ),
-            borderWidth: 3,
-            label: {
-              display: false,
-              content: `Fire Event ${curr.fire_events[0].datetime}`,
-              position: "end",
-            },
-            enter(context) {
-              context.element.label.options.display = true;
-              return true;
-            },
-            leave(context) {
-              context.element.label.options.display = false;
-              return true;
-            },
-            click(context) {
-              openEventDetail(context.id);
-            },
-          });
-        }
-        if (curr.policies?.length) {
-          accu.push({
-            id: `policy::${curr.policies[0].policy_id}`,
-            type: "line",
-            borderColor: "#ebde34",
-            // will always get the month
-            xMax: curr.policies[0].datetime.slice(
-              0,
-              curr.policies[0].datetime.length - 3
-            ),
-            xMin: curr.policies[0].datetime.slice(
-              0,
-              curr.policies[0].datetime.length - 3
-            ),
-            borderWidth: 3,
-            label: {
-              display: false,
-              content: `Policy ${curr.policies[0].name}`,
-              position: "end",
-            },
-            enter(context) {
-              context.element.label.options.display = true;
-              return true;
-            },
-            leave(context) {
-              context.element.label.options.display = false;
-              return true;
-            },
-            click(context) {
-              openEventDetail(context.id);
-            },
-          });
-        }
-        if (curr.programs?.length) {
-          accu.push({
-            id: `program::${curr.programs[0].program_id}`,
-            type: "line",
-            borderColor: "#9e14a8",
-            // will always get the month
-            xMax: curr.programs[0].datetime.slice(
-              0,
-              curr.programs[0].datetime.length - 3
-            ),
-            xMin: curr.programs[0].datetime.slice(
-              0,
-              curr.programs[0].datetime.length - 3
-            ),
-            borderWidth: 3,
-            label: {
-              display: false,
-              content: `Program ${curr.programs[0].name}`,
-              position: "end",
-            },
-            enter(context) {
-              context.element.label.options.display = true;
-              return true;
-            },
-            leave(context) {
-              context.element.label.options.display = false;
-              return true;
-            },
-            click(context) {
-              openEventDetail(context.id);
-            },
-          });
-        }
-        return accu;
-      }, []);
+    const res = [];
+    if (fireEventsData) {
+      fireEventsData.forEach((data) => {
+        res.push({
+          id: `fireevent::${data.temporal.from_date}/${data.temporal.to_date}`,
+          type: "box",
+          backgroundColor: "rgba(158,1, 66, 0.5)",
+          borderColor: "rgba(158,1, 66, 1)",
+          xMin: data.temporal.from_date,
+          xMax: data.temporal.to_date,
+          // yMin: 0,
+          // yMax: 3,
+          // borderWidth: 3,
+          label: {
+            display: false,
+            content: `Fire Event`,
+            position: "center",
+          },
+          enter(context) {
+            context.element.label.options.display = true;
+            return true;
+          },
+          leave(context) {
+            context.element.label.options.display = false;
+            return true;
+          },
+          click(context) {
+            // openEventDetail(context.id);
+          },
+        });
+      });
     }
-    return [];
+    if (regulationsData) {
+      regulationsData.forEach((data) => {
+        res.push({
+          id: `regulation::${data.temporal.acquired_date}`,
+          type: "line",
+          backgroundColor: "rgba(254,224,139, 0.5)",
+          borderColor: "rgba(254,224,139, 1)",
+          xMin: data.temporal.acquired_date,
+          xMax: data.temporal.acquired_date,
+          // yMin: 0,
+          // yMax: 3,
+          // borderWidth: 3,
+          label: {
+            display: false,
+            content: `Regulation`,
+            position: "center",
+          },
+          enter(context) {
+            context.element.label.options.display = true;
+            return true;
+          },
+          leave(context) {
+            context.element.label.options.display = false;
+            return true;
+          },
+          click(context) {
+            // openEventDetail(context.id);
+          },
+        });
+      });
+    }
+    if (programsData) {
+      programsData.forEach((data) => {
+        res.push({
+          id: `programme::${data.temporal.from_date}/${data.temporal.to_date}`,
+          type: "box",
+          backgroundColor: "rgb(50, 136, 189, 0.5)",
+          borderColor: "rgb(50, 136, 189, 1)",
+          xMin: data.temporal.from_date,
+          xMax: data.temporal.to_date,
+          // yMin: 2,
+          // yMax: 1,
+          // borderWidth: 3,
+          label: {
+            display: false,
+            content: `Programme`,
+            position: "center",
+          },
+          enter(context) {
+            context.element.label.options.display = true;
+            return true;
+          },
+          leave(context) {
+            context.element.label.options.display = false;
+            return true;
+          },
+          click(context) {
+            // openEventDetail(context.id);
+          },
+        });
+      });
+    }
+    return res;
   }, [data, openEventDetail]);
+
+  const fireEventAnnotations = useMemo(() => {
+    return fireEventsData.reduce((curr, data) => {
+      if (data) {
+        curr.push({
+          type: "label",
+          drawTime: "afterDraw",
+          content: getImage("/fire.svg"),
+          width: 30,
+          height: 30,
+          position: {
+            x: "center",
+            y: "start",
+          },
+          xValue: data.temporal.from_date,
+          yValue: 0,
+        });
+      }
+      return curr;
+    }, []);
+  }, [fireEventsData]);
+
+  const regulationAnnotations = useMemo(() => {
+    return regulationsData.reduce((curr, data) => {
+      if (data) {
+        curr.push({
+          type: "label",
+          drawTime: "afterDraw",
+          content: getImage("/regulation.svg"),
+          width: 30,
+          height: 30,
+          position: {
+            x: "center",
+            y: "0",
+          },
+          xValue: data.temporal.acquired_date,
+          yValue: 0,
+        });
+      }
+      return curr;
+    }, []);
+  }, [regulationsData]);
+
+  const programAnnotations = useMemo(() => {
+    return programsData.reduce((curr, data) => {
+      if (data) {
+        curr.push({
+          type: "label",
+          drawTime: "afterDraw",
+          content: getImage("/program.svg"),
+          width: 30,
+          height: 30,
+          position: {
+            x: "center",
+            y: "0.5",
+          },
+          xValue: data.temporal.from_date,
+          yValue: 0.5,
+        });
+      }
+      return curr;
+    }, []);
+  }, [programsData]);
 
   const chartData = useMemo(() => {
     if (data && labels.length) {
@@ -126,16 +256,16 @@ export default function BiodiversityIndexChart({ data, openEventDetail }) {
         labels,
         datasets: [
           {
-            label: "Evenness",
-            data: data.data.map((data) => data.evenness),
-            borderColor: "rgb(255, 99, 132)",
-            backgroundColor: "rgba(255, 99, 132, 0.5)",
+            label: "Shannon Index",
+            data: shannonIndexData,
+            borderColor: "#9e0142",
+            backgroundColor: "#9e0142",
           },
           {
-            label: "Shannon Index",
-            data: data.data.map((data) => data.shannon_index),
-            borderColor: "rgb(53, 162, 235)",
-            backgroundColor: "rgba(53, 162, 235, 0.5)",
+            label: "Evenness",
+            data: evennessData,
+            borderColor: "#5e4fa2",
+            backgroundColor: "#5e4fa2",
           },
         ],
       };
@@ -155,6 +285,11 @@ export default function BiodiversityIndexChart({ data, openEventDetail }) {
         left: 30,
       },
     },
+    scales: {
+      y: {
+        grace: 1,
+      },
+    },
     plugins: {
       legend: {
         display: true,
@@ -171,7 +306,12 @@ export default function BiodiversityIndexChart({ data, openEventDetail }) {
         containerID: "legend-container",
       },
       annotation: {
-        annotations: events,
+        annotations: [
+          ...events,
+          ...fireEventAnnotations,
+          ...regulationAnnotations,
+          ...programAnnotations,
+        ],
       },
     },
   };
@@ -192,7 +332,10 @@ export default function BiodiversityIndexChart({ data, openEventDetail }) {
           ]}
         />
       </div>
-      <div id="legend-container" className="h-8"></div>
+      <div
+        id="legend-container"
+        className="h-8"
+      ></div>
     </>
   );
 }

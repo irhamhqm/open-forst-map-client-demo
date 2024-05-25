@@ -1,3 +1,5 @@
+// @ts-nocheck
+import React from "react";
 import EcologicalResilienceChart from "../Charts/EcologicalResilience";
 // import NDVIDataChart from "./Chart";
 

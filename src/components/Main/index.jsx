@@ -3,6 +3,7 @@ import DatePicker from "react-datepicker";
 import { useState } from "react";
 
 import "react-datepicker/dist/react-datepicker.css";
+import React from "react";
 // semua input date pakai date range
 const data_types = {
   bi: "Biodiversity Index",
@@ -29,7 +30,7 @@ export default function Main({
     setIsDragging(true);
     setOffset({
       x: e.clientX - position.x,
-      y: e.clientY - position.y
+      y: e.clientY - position.y,
     });
   };
 
@@ -38,7 +39,7 @@ export default function Main({
 
     setPosition({
       x: e.clientX - offset.x,
-      y: e.clientY - offset.y
+      y: e.clientY - offset.y,
     });
   };
 
@@ -47,17 +48,18 @@ export default function Main({
   };
 
   return (
-    <div 
+    <div
       className="bg-white fixed top-14 left-[50%] -translate-x-1/2 z-[1002] p-6 rounded-2xl"
       style={{
-        position: 'absolute',
+        position: "absolute",
         top: position.y,
         left: position.x,
-        cursor: isDragging ? 'grabbing' : 'grab'
+        cursor: isDragging ? "grabbing" : "grab",
       }}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}>
+      onMouseUp={handleMouseUp}
+    >
       <div className="flex px-6 gap-4">
         <div className="bg-gray-300 w-8 h-8 flex items-center justify-center">
           <IconMenu2 onClick={() => openDrawer(true)} />

@@ -3,9 +3,9 @@ import Home from "./pages/home";
 import SignIn from "./pages/signin";
 import SignUp from "./pages/signup";
 import App from "./pages/map";
+import React from "react";
 
 function AppRouter() {
-  
   return (
     <div className="App">
       <BrowserRouter>

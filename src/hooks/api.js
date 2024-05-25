@@ -30,12 +30,11 @@ export const useGetEcologicalResilience = () => {
   });
 };
 
-export const useGetEcologicalResilienceDetails = (payload) => {
-  const { id } = payload;
-  return useQuery({
-    queryKey: ["ecological_resilience_details", id],
-    queryFn: () => getEcologicalResilienceDetails({ id }),
-    enabled: !!id,
+export const useGetEcologicalResilienceDetails = () => {
+  return useMutation({
+    mutationKey: ["ecological_resilience_details"],
+    mutationFn: (payload) => getEcologicalResilienceDetails(payload),
+    // enabled: !!payload,
     // select: ({ data }) => data,
   });
 };

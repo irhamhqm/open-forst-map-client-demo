@@ -1,26 +1,32 @@
+// @ts-nocheck
 // import "./App.css";
 import { MapContainer, TileLayer } from "react-leaflet";
 import Drawing from "../../components/Drawing";
 import { useMemo, useState, useEffect } from "react";
 import SideDrawer from "../../components/SideDrawer";
-import { parseStringToSilvanusCoord, sivalnusCoordToSilvanusGeo } from "../../util";
+import {
+  parseStringToSilvanusCoord,
+  sivalnusCoordToSilvanusGeo,
+} from "../../util";
 import Main from "../../components/Main";
 import {
   useGetBiodiversityIndex,
   useGetContinuousMonitoring,
   useGetEcologicalResilience,
+  useGetEcologicalResilienceDetails,
   // useGetEcologicalResilienceDetails,
   useGetFireEventDetails,
   useGetPolicyDetails,
   useGetProgramDetails,
 } from "../../hooks/api";
-import { getUnixTime, sub } from "date-fns";
+import { format, getUnixTime, sub } from "date-fns";
 import Charts from "../../components/Charts";
 import DetailChart from "../../components/DetailChart";
 import EventDetail from "../../components/EventDetail";
 import { useLocation, useNavigate } from "react-router-dom";
 import store from "store2";
-import ReportBugButton from './components/ReportBugButton';
+import ReportBugButton from "./components/ReportBugButton";
+import React from "react";
 // import GeotiffLayer from "./components/Layers/GeotiffLayer";
 
 // const tiffUrl =
@@ -60,26 +66,26 @@ function App() {
 
   // CEK APAKAH USER SUDAH LOGIN
   useEffect(() => {
-    if(!location?.state?.signedUp) {
-      navigate('/signin')
+    if (!location?.state?.signedUp) {
+      navigate("/signin");
     }
   }, [location?.state?.signedUp]);
 
-  const unixStart = useMemo(() => {
-    return getUnixTime(start);
-  }, [start]);
+  // const unixStart = useMemo(() => {
+  //   return getUnixTime(start);
+  // }, [start]);
 
-  const unixEnd = useMemo(() => {
-    return getUnixTime(end);
-  }, [end]);
+  // const unixEnd = useMemo(() => {
+  //   return getUnixTime(end);
+  // }, [end]);
 
-  const unixNow = useMemo(() => {
-    return getUnixTime(new Date());
-  }, []);
+  // const unixNow = useMemo(() => {
+  //   return getUnixTime(new Date());
+  // }, []);
 
-  const unix1YearPast = useMemo(() => {
-    return getUnixTime(sub(date, { years: 1 }));
-  }, [date]);
+  // const unix1YearPast = useMemo(() => {
+  //   return getUnixTime(sub(date, { years: 1 }));
+  // }, [date]);
 
   const partialFormattedSilvanusGeoJson = useMemo(() => {
     let val = { coordinates: [[{ lat: 0, lon: 0 }]], type: "" };
@@ -95,7 +101,7 @@ function App() {
   const biodiversityIndex = useGetBiodiversityIndex();
   const continuousMonitoring = useGetContinuousMonitoring();
   const ecologicalResilience = useGetEcologicalResilience();
-  const ecologicalResilienceSpec = useGetEcologicalResilience();
+  const ecologicalResilienceSpec = useGetEcologicalResilienceDetails();
 
   // const ecologicalResilienceDetails = useGetEcologicalResilienceDetails({
   //   id: "fire_event1",
@@ -119,16 +125,13 @@ function App() {
       biodiversityIndex.mutate(
         {
           ...partialFormattedSilvanusGeoJson,
-          properties:
-            mode === "range"
-              ? {
-                  frequency: "monthly",
-                  daterange: `${unixStart}:${unixEnd}`,
-                }
-              : {
-                  frequency: "monthly",
-                  daterange: `${unix1YearPast}:${unixNow}`,
-                },
+          properties: {
+            // frequency: "monthly",
+            daterange: `${format(start, "yyyy-MM-dd")}/${format(
+              end,
+              "yyyy-MM-dd"
+            )}`,
+          },
         },
         {
           onSuccess: () => setChartsOpen(true),
@@ -139,18 +142,14 @@ function App() {
       continuousMonitoring.mutate(
         {
           ...partialFormattedSilvanusGeoJson,
-          properties:
-            mode === "range"
-              ? {
-                  frequency: "monthly",
-                  daterange: `${unixStart}:${unixEnd}`,
-                  variables: ["all"],
-                }
-              : {
-                  frequency: "monthly",
-                  daterange: `${unix1YearPast}:${unixNow}`,
-                  variables: ["all"],
-                },
+          properties: {
+            frequency: "monthly",
+            daterange: `${format(start, "yyyy-MM-dd")}/${format(
+              end,
+              "yyyy-MM-dd"
+            )}`,
+            variables: "",
+          },
         },
         {
           onSuccess: () => setChartsOpen(true),
@@ -161,16 +160,14 @@ function App() {
       ecologicalResilience.mutate(
         {
           ...partialFormattedSilvanusGeoJson,
-          properties:
-            mode === "range"
-              ? {
-                  frequency: "monthly",
-                  daterange: `${unixStart}:${unixEnd}`,
-                }
-              : {
-                  frequency: "monthly",
-                  daterange: `${unix1YearPast}:${unixNow}`,
-                },
+          properties: {
+            frequency: "monthly",
+            daterange: `${format(start, "yyyy-MM-dd")}/${format(
+              end,
+              "yyyy-MM-dd"
+            )}`,
+            variables: "ndvi",
+          },
         },
         {
           onSuccess: () => setChartsOpen(true),
@@ -184,8 +181,7 @@ function App() {
       {
         ...partialFormattedSilvanusGeoJson,
         properties: {
-          frequency: "monthly",
-          daterange: `${getUnixTime(sub(date, { years: 1 }))}:${unixNow}`,
+          datetime: `${format(date, "yyyy-MM-dd")}`,
         },
       },
       {
@@ -199,21 +195,23 @@ function App() {
       <div className="flex w-full bg-gray-800 py-4">
         <div className="container mx-auto px-4 flex">
           <p className="text-white text-xl font-semibold">
-            Hello, {store.get("user_data").user_display_name},{' '}
-            {store.get("user_data").user_role === 'client'? 'Client for Pilot' : 'Admin for Pilot'}{' '}
+            Hello, {store.get("user_data").user_display_name},{" "}
+            {store.get("user_data").user_role === "client"
+              ? "Client for Pilot"
+              : "Admin for Pilot"}{" "}
             {store.get("user_data").pilot_name}
           </p>
           {/* {pilotData?.pilot_name || "Super admin"} */}
-          
-        <button
-          className="ml-4 bg-blue-500 hover:bg-blue-600 text-white font-bold px-4 rounded-md transition duration-300 ease-in-out"
-          onClick={() => {
-            store.clear();
-            navigate("/");
-          }}
-        >
-          Sign Out
-        </button>
+
+          <button
+            className="ml-4 bg-blue-500 hover:bg-blue-600 text-white font-bold px-4 rounded-md transition duration-300 ease-in-out"
+            onClick={() => {
+              store.clear();
+              navigate("/");
+            }}
+          >
+            Sign Out
+          </button>
         </div>
         {/* <button
           className="ml-auto border border-solid border-gray-600 p-1"
@@ -238,7 +236,7 @@ function App() {
         date={date}
         setDate={setDate}
         mode={mode}
-        setMode={setMode}
+        // setMode={setMode}
       />
       <Charts
         type={selectedType}
@@ -292,7 +290,7 @@ function App() {
         /> */}
         <Drawing onCreate={(obj) => setDrawnObj(obj)} />
       </MapContainer>
-      <ReportBugButton/>
+      <ReportBugButton />
     </>
   );
 }
